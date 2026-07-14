@@ -4,6 +4,7 @@
 
 **Configure supported Keychron devices on Linux — without installing or opening a separate Chromium browser.**
 
+[![Version](https://img.shields.io/badge/version-0.0.1-informational)](CHANGELOG.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](#license)
 [![Fedora](https://img.shields.io/badge/Fedora-44-blue?logo=fedora&logoColor=white)](https://fedoraproject.org)
 [![Electron](https://img.shields.io/badge/Electron-43-47848f?logo=electron&logoColor=white)](https://www.electronjs.org)
@@ -14,6 +15,20 @@
   </a>
 </p>
 </div>
+
+---
+
+## About
+
+| | |
+|---|---|
+| **Application** | LGL Keychron Helper |
+| **Version** | v0.0.1 |
+| **Status** | Phase 1 — Electron shell scaffolded; Launcher loads; WebHID device recognition pending physical K4 HE testing |
+| **License** | MIT |
+| **Author** | [LinuxGamerLife](https://www.youtube.com/@linuxgamerlife) |
+
+See [CHANGELOG.md](CHANGELOG.md) for a detailed history of changes.
 
 ---
 
@@ -119,7 +134,16 @@ Install the locked JavaScript dependencies with:
 npm ci
 ```
 
-Build and run commands will be added after the initial application scaffold is complete.
+The current prototype only builds the Electron main process (no renderer yet — that arrives in Phase 2). Build inside the Distrobox, then run on the host:
+
+```bash
+# Inside the Fedora 44 Distrobox
+npm run build:main
+
+# From a host terminal — executes the Electron binary directly, no
+# npm/Node install required on the host itself
+node_modules/electron/dist/electron .
+```
 
 > Do not commit `node_modules`, build output, test output, logs, or local environment files.
 
@@ -132,8 +156,10 @@ Build and run commands will be added after the initial application scaffold is c
 - [x] Security boundaries defined
 - [x] Project plan written
 - [x] Direct dependencies pinned and audited
-- [ ] Electron and React project scaffold
-- [ ] Keychron Launcher WebHID proof of concept
+- [x] Electron main process scaffold
+- [x] Application menu, About window, and navigation controls
+- [ ] Keychron Launcher WebHID proof of concept (Launcher loads; device recognition pending physical K4 HE)
+- [ ] React renderer and build workflow
 - [ ] Guided Fedora device permissions
 - [ ] K4 HE feature validation
 - [ ] Advanced diagnostics
