@@ -24,7 +24,7 @@
 |---|---|
 | **Application** | LGL Keychron Helper |
 | **Version** | v0.0.1 |
-| **Status** | Phase 1 — Electron shell scaffolded; Launcher loads; WebHID device recognition pending physical K4 HE testing |
+| **Status** | Phase 1 — Electron shell scaffolded; Launcher loads; WebHID device recognition pending physical M7 8K testing |
 | **License** | MIT |
 | **Author** | [LinuxGamerLife](https://www.youtube.com/@linuxgamerlife) |
 
@@ -54,7 +54,7 @@ LGL Keychron Helper is a Linux desktop wrapper for the official [Keychron Launch
 | **Operating System** | Fedora Linux |
 | **Development Environment** | Fedora 44 Distrobox |
 | **Runtime Environment** | Fedora host desktop |
-| **Initial Device** | Keychron K4 HE |
+| **Initial Device** | Keychron M7 8K |
 | **Connection** | Wired USB |
 | **Web Configurator** | Keychron Launcher |
 
@@ -65,10 +65,10 @@ LGL Keychron Helper is a Linux desktop wrapper for the official [Keychron Launch
 | Category | Initial Prototype Scope |
 |---|---|
 | **Device Connection** | Detect and connect officially supported Keychron devices through WebHID |
-| **Keymap** | Read and change key assignments and layers |
+| **Button Mapping** | Remap mouse buttons and assign macros or actions |
 | **Macros** | Create, edit, assign, and remove macros |
 | **Lighting** | Configure effects, colour, brightness, saturation, and speed |
-| **K4 HE Controls** | Actuation distance, Rapid Trigger, Snap Click, and other non-firmware HE settings |
+| **M7 8K Controls** | DPI/sensitivity stages, polling rate (up to 8K), lift-off distance, and other non-firmware settings |
 | **Linux Permissions** | Detect missing HID access and offer guided PolicyKit setup |
 | **Diagnostics** | Advanced device, permission, environment, and connection information |
 
@@ -158,10 +158,10 @@ node_modules/electron/dist/electron .
 - [x] Direct dependencies pinned and audited
 - [x] Electron main process scaffold
 - [x] Application menu, About window, and navigation controls
-- [ ] Keychron Launcher WebHID proof of concept (Launcher loads; device recognition pending physical K4 HE)
+- [ ] Keychron Launcher WebHID proof of concept (Launcher loads; device recognition pending physical M7 8K)
 - [ ] React renderer and build workflow
 - [ ] Guided Fedora device permissions
-- [ ] K4 HE feature validation
+- [ ] M7 8K feature validation
 - [ ] Advanced diagnostics
 - [ ] Fedora RPM
 

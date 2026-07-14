@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Planned
 
 - React-based WebHID device chooser to replace the current auto-grant-first-match behavior.
-- Physical validation of the WebHID connection flow against a Keychron K4 HE.
+- Physical validation of the WebHID connection flow against a Keychron M7 8K.
 
 ## [0.0.1] - 2026-07-14
 
@@ -31,9 +31,13 @@ Initial Phase 1 scaffold: the smallest possible Electron application capable of 
 - Wayland server-side window decorations enabled (`enable-features=WaylandWindowDecorations`, `ozone-platform-hint=auto`) so the window border/titlebar follows the host compositor theme.
 - Fixed initial window size (1300×946), floored as the minimum resizable size.
 
+### Changed
+
+- Initial validation target switched from the Keychron K4 HE (keyboard) to the Keychron M7 8K (mouse). This changes the prototype feature scope from keymap/actuation/Rapid Trigger/Snap Click to button mapping/DPI-sensitivity/polling rate/lift-off distance; see `README.md` and `lgl-keychron-helper_projectplan.md`.
+
 ### Known limitations
 
 - No user-facing device chooser yet — the first Keychron-vendor-ID HID device found is auto-granted. A React-based chooser is planned for Phase 2.
 - The Keychron USB vendor ID filter (`0x3434`) has not yet been verified against a physical device.
-- WebHID device recognition has not yet been validated against a real Keychron K4 HE.
+- WebHID device recognition has not yet been validated against a real Keychron M7 8K.
 - No React/Vite renderer, Linux permission tooling, or diagnostics yet — those are later phases per `lgl-keychron-helper_projectplan.md`.

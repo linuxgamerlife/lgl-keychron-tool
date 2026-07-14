@@ -4,14 +4,14 @@
 
 Build a Linux desktop application that loads the live Keychron Launcher and lets users configure supported Keychron products without installing or opening a separate Chromium-based browser.
 
-The first working prototype will target Fedora, run from source, and be validated with a Keychron K4 HE connected over USB. RPM packaging will follow; AppImage packaging may be considered later.
+The first working prototype will target Fedora, run from source, and be validated with a Keychron M7 8K connected over USB. RPM packaging will follow; AppImage packaging may be considered later.
 
 ## Agreed requirements
 
 - Platform: Linux, with Fedora as the initial target.
 - Development environment: Fedora 44 Distrobox.
 - Test desktop: custom KWin/Noctalia environment.
-- Initial device: Keychron K4 HE.
+- Initial device: Keychron M7 8K.
 - Connection: wired USB only for the prototype.
 - Web application: <https://launcher.keychron.com/>.
 - UI strategy: preserve the official Keychron Launcher experience as closely as possible.
@@ -20,11 +20,11 @@ The first working prototype will target Fedora, run from source, and be validate
 - Supported products: devices officially supported by Keychron Launcher.
 - Initial feature scope:
   - Device detection and connection.
-  - Key remapping and layers.
+  - Button remapping and assignment.
   - Macro creation and assignment.
   - Lighting configuration.
-  - K4 HE actuation settings.
-  - Rapid Trigger, Snap Click, and other non-firmware Hall-effect controls exposed by Launcher.
+  - DPI/sensitivity stage configuration.
+  - Polling rate (up to 8K), lift-off distance, and other non-firmware controls exposed by Launcher.
 - Deferred scope: firmware updates and flashing.
 - Site storage: persist Launcher cookies, local storage, and settings between launches.
 - Linux permissions: detect missing HID permissions and offer guided installation through `pkexec`.
@@ -77,7 +77,7 @@ Required controls:
 - A narrow context bridge for local React screens, with no generic command execution or unrestricted filesystem access.
 - Deny unrelated Electron permission requests by default.
 - Prevent the remote page from navigating the main window to an untrusted origin.
-- Do not enable Chromium's HID blocklist override unless testing proves that a required K4 HE interface is blocked and the exception can be narrowly justified.
+- Do not enable Chromium's HID blocklist override unless testing proves that a required M7 8K interface is blocked and the exception can be narrowly justified.
 - Do not log HID report contents, macro contents, key assignments, or device serial numbers by default.
 
 ## Project phases
@@ -90,14 +90,14 @@ Create the smallest Electron application capable of loading Launcher and validat
 
 - Launcher renders correctly.
 - The Connect button causes Electron's WebHID selection event to fire.
-- The connected K4 HE appears in the device list.
+- The connected M7 8K appears in the device list.
 - Selecting it allows Launcher to recognize and read the keyboard.
 - Launcher storage persists across reloads and application restarts.
 - Required Keychron resources, redirects, and popups behave correctly.
 
 This phase is the primary technical gate. Do not build a custom Keychron protocol implementation unless direct Launcher integration proves impossible.
 
-Exit criterion: Launcher detects the wired K4 HE and reads its existing configuration.
+Exit criterion: Launcher detects the wired M7 8K and reads its existing configuration.
 
 ### Phase 2 — Secure application shell
 
@@ -134,7 +134,7 @@ First-run behavior:
 7. Ask the user to reconnect the keyboard when necessary.
 8. Retry detection without restarting the app if possible.
 
-Initially target only verified K4 HE identifiers. Expansion to other products should use an audited device-ID list rather than granting access to every HID device.
+Initially target only verified M7 8K identifiers. Expansion to other products should use an audited device-ID list rather than granting access to every HID device.
 
 #### Distrobox consideration
 
@@ -142,28 +142,28 @@ Installing a `udev` rule inside the Fedora 44 Distrobox will not configure the h
 
 Exit criterion: a regular Fedora user can resolve a missing-device-permission failure through one guided `pkexec` prompt without manually editing system files or running the app as root.
 
-### Phase 4 — K4 HE feature validation
+### Phase 4 — M7 8K feature validation
 
 Estimated effort: 3–5 working days.
 
-Validate the following against the physical keyboard:
+Validate the following against the physical mouse:
 
 - Initial detection and selection.
 - Disconnect and reconnect behavior.
 - Reading the existing configuration.
-- Remapping keys on every available layer.
+- Button remapping and assignment on every available profile.
 - Creating, editing, naming, assigning, and removing macros.
 - Lighting effect, colour, brightness, saturation, and speed controls.
-- Actuation distance configuration.
-- Rapid Trigger basic and advanced settings.
-- Snap Click and other non-firmware HE controls exposed for the K4 HE.
-- Configuration persistence on the keyboard.
+- DPI/sensitivity stage configuration.
+- Polling rate configuration, including 8K operation.
+- Lift-off distance and other non-firmware controls exposed for the M7 8K.
+- Configuration persistence on the mouse.
 - Site reload and application restart.
 - Graceful failure if USB is disconnected during an ordinary read or setting change.
 
 Firmware functionality should be treated as unsupported during this milestone. If Launcher exposes firmware controls, the app should block them or display an explicit unsupported warning until a separate safety and recovery design has been completed.
 
-Exit criterion: detection, remapping, macros, lighting, and all non-firmware K4 HE configuration controls work reliably.
+Exit criterion: detection, button remapping, macros, lighting, and all non-firmware M7 8K configuration controls work reliably.
 
 ### Phase 5 — Advanced diagnostics
 
@@ -202,7 +202,7 @@ Add:
 - Unit tests for `udev` rule generation and validation.
 - Tests for Distrobox and host detection.
 - Electron integration tests using a local mock WebHID page where practical.
-- A physical-device K4 HE test checklist.
+- A physical-device M7 8K test checklist.
 - Fedora source-build and run instructions.
 - Troubleshooting and security documentation.
 - Dependency locking and reproducible build commands.
@@ -226,7 +226,7 @@ The RPM should provide:
 
 Installation should place system permission files directly, avoiding a first-run `pkexec` prompt when the package installation has already completed the necessary setup.
 
-Exit criterion: the application installs, launches, configures the K4 HE, upgrades, and uninstalls cleanly on supported Fedora versions.
+Exit criterion: the application installs, launches, configures the M7 8K, upgrades, and uninstalls cleanly on supported Fedora versions.
 
 ### Deferred milestone — Firmware support
 
@@ -295,8 +295,8 @@ The prototype is complete when a non-root Fedora user can:
 1. Build and run the application from source.
 2. Open the live Keychron Launcher inside the application.
 3. Resolve missing USB permissions through a guided `pkexec` prompt.
-4. Select and connect a wired K4 HE through the intended Launcher flow.
-5. Use remapping, macros, lighting, and all non-firmware HE controls.
+4. Select and connect a wired M7 8K through the intended Launcher flow.
+5. Use button remapping, macros, lighting, and all non-firmware controls.
 6. Restart the app without losing Launcher site settings.
 7. Diagnose common connection and permission failures from the Advanced section.
 
@@ -336,14 +336,12 @@ Mitigation: implement a small native chooser that preserves the same user decisi
 
 Launcher may expose firmware features even though the prototype does not support them safely.
 
-Mitigation: verify the K4 HE behavior early and add a narrowly scoped block or warning without modifying unrelated Launcher functionality.
+Mitigation: verify the M7 8K behavior early and add a narrowly scoped block or warning without modifying unrelated Launcher functionality.
 
 ## References
 
 - [Keychron Launcher](https://launcher.keychron.com/)
-- [Keychron K4 HE product information](https://www.keychron.com/products/keychron-k4-he-wireless-magnetic-switch-custom-keyboard)
-- [Keychron Launcher programming guide](https://www.keychron.com/blogs/news/how-to-use-launcher-to-program-your-keyboard)
-- [Keychron HE mode guide](https://www.keychron.com/pages/how-to-use-he-mode-on-keychron-launcher)
+- Keychron M7 8K product information — TODO: add the correct product page URL (not guessed; please supply it)
 - [Electron WebHID device access](https://www.electronjs.org/docs/latest/tutorial/devices)
 - [Electron security guidance](https://www.electronjs.org/docs/latest/tutorial/security)
 - [React documentation](https://react.dev/)

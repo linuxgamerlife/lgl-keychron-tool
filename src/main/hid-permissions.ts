@@ -1,7 +1,7 @@
 import type { Session } from 'electron';
 
 // Keychron's USB vendor ID as used across its QMK/Launcher device definitions.
-// TODO(Phase 1 host testing): confirm against `lsusb` output for the physical K4 HE
+// TODO(Phase 1 host testing): confirm against `lsusb` output for the physical M7 8K
 // before relying on this filter for anything beyond the proof of concept.
 const KEYCHRON_VENDOR_ID = 0x3434;
 
