@@ -23,7 +23,7 @@
 |---|---|
 | **Application** | LGL Keychron Helper |
 | **Version** | v0.1.0 |
-| **Status** | Phase 1 complete; Phase 3 (guided device permissions) in progress — Launcher loads and connects to a physical M7 8K, with an in-app popup to install the required `udev` rule via `pkexec` |
+| **Status** | Functional prototype — Launcher loads, connects to a physical M7 8K, and guides the user through installing the required `udev` permission via an in-app `pkexec` prompt when needed |
 | **License** | MIT |
 | **Author** | [LinuxGamerLife](https://www.youtube.com/@linuxgamerlife) |
 
@@ -33,16 +33,17 @@ See [CHANGELOG.md](CHANGELOG.md) for a detailed history of changes.
 
 ## Overview
 
-LGL Keychron Helper is a Linux desktop wrapper for the official [Keychron Launcher](https://launcher.keychron.com/). It will bundle the browser engine Launcher requires, provide WebHID device access, and guide users through Linux USB permissions while preserving Keychron's intended interface and connection flow.
+LGL Keychron Helper is a Linux desktop wrapper for the official [Keychron Launcher](https://launcher.keychron.com/). It bundles the browser engine Launcher requires, provides WebHID device access, and guides users through Linux USB permissions while preserving Keychron's intended interface and connection flow.
 
-- Uses the live Keychron Launcher rather than recreating the configurator
+- Uses the live Keychron Launcher rather than recreating the configurator — button mapping, macros, lighting, DPI/sensitivity, polling rate, and other device-specific controls are all handled by Launcher's own interface, not reimplemented here
 - Supports devices officially recognised by Keychron Launcher
 - Runs the graphical application as an ordinary user
-- Keeps native diagnostics and permission guidance behind an Advanced section
-- Targets a source-built prototype followed by a Fedora RPM
+- Automatically detects and guides the user through fixing missing Linux HID permissions
+- Targets a source-built prototype followed by distribution via Fedora COPR
+- Firmware updates are deliberately deferred until safe flashing, failure handling, and device recovery procedures have been designed and physically tested
 
-> [!IMPORTANT]
-> This project is in the planning and initial scaffolding stage. It is not yet a working configurator.
+> [!NOTE]
+> This is a working prototype: it connects to a physical Keychron device and lets Launcher read and configure it. Automated tests, an application icon, and Fedora RPM/COPR packaging are still in progress.
 
 ---
 
@@ -59,22 +60,6 @@ LGL Keychron Helper is a Linux desktop wrapper for the official [Keychron Launch
 
 ---
 
-## Planned Features
-
-| Category | Initial Prototype Scope |
-|---|---|
-| **Device Connection** | Detect and connect officially supported Keychron devices through WebHID |
-| **Button Mapping** | Remap mouse buttons and assign macros or actions |
-| **Macros** | Create, edit, assign, and remove macros |
-| **Lighting** | Configure effects, colour, brightness, saturation, and speed |
-| **M7 8K Controls** | DPI/sensitivity stages, polling rate (up to 8K), lift-off distance, and other non-firmware settings |
-| **Linux Permissions** | Detect missing HID access and offer guided PolicyKit setup |
-| **Diagnostics** | Advanced device, permission, environment, and connection information |
-
-Firmware updates are deliberately deferred until safe flashing, failure handling, and device recovery procedures have been designed and physically tested.
-
----
-
 ## Architecture
 
 The application uses:
@@ -83,7 +68,7 @@ The application uses:
 - **TypeScript** for the main process
 - Small, sandboxed local HTML/JS popups (no framework) for trusted local screens such as the About window, device-connection confirmation, and permission setup
 
-Keychron Launcher will remain isolated remote content. Local screens will not replace or inject themselves into the Launcher interface.
+Keychron Launcher remains isolated remote content. Local screens do not replace or inject themselves into the Launcher interface.
 
 ```text
 Keychron Launcher
@@ -104,53 +89,14 @@ Remote Launcher content is treated as untrusted web content even though it is su
 
 - Node.js integration is disabled for remote content
 - Context isolation and renderer sandboxing are enabled
-- Hardware access is restricted to approved origins and verified devices
+- Hardware access is restricted to verified Keychron devices by USB vendor ID (origin validation is not yet implemented — tracked as a known gap)
 - Unrelated browser permissions are denied by default
-- Navigation, popups, downloads, and external URLs are controlled
+- Navigation, popups, and external URLs are controlled (download interception is not yet implemented — tracked as a known gap)
 - Trusted local content is separated from the remote website
 - Native operations use narrow, typed, validated interfaces
 - The remote website receives no arbitrary shell or filesystem access
 
-Linux device access will use a narrow `udev` rule and a minimal PolicyKit helper. The graphical application will never run as root.
-
----
-
-## Development
-
-The application is built inside Fedora 44 Distrobox and run on the host for graphical, WebHID, `udev`, PolicyKit, and physical-device testing.
-
-Inside the development Distrobox, the host project may be available at:
-
-```text
-/run/host/development/projects/lgl-keychron-tool
-```
-
-Install the locked JavaScript dependencies with:
-
-```bash
-npm ci
-```
-
-The current prototype builds the Electron main process. Build inside the Distrobox, then run on the host:
-
-```bash
-# Inside the Fedora 44 Distrobox
-npm run build:main
-
-# From a host terminal — executes the Electron binary directly, no
-# npm/Node install required on the host itself
-node_modules/electron/dist/electron .
-```
-
-To produce a standalone runnable bundle (no `npm`/`node` needed to run it afterward — a quick way to share or test the app without a full Fedora RPM, which is a later, separate packaging task):
-
-```bash
-npm run package
-```
-
-This writes a self-contained build to `out/lgl-keychron-helper-linux-x64/`; run the `lgl-keychron-helper` binary inside it directly.
-
-> Do not commit `node_modules`, build output, test output, logs, or local environment files.
+Linux device access uses a narrow `udev` rule installed through a `pkexec`-invoked helper. The graphical application never runs as root.
 
 ---
 
@@ -165,8 +111,7 @@ This writes a self-contained build to `out/lgl-keychron-helper-linux-x64/`; run 
 - [x] Application menu, About window, and navigation controls
 - [x] Keychron Launcher WebHID proof of concept (confirmed connecting to a physical M7 8K)
 - [x] Guided Fedora device permissions (detects missing `hidraw` access and installs the `udev` rule via an in-app `pkexec` prompt)
-- [ ] M7 8K feature validation
-- [ ] Advanced diagnostics
+- [x] M7 8K feature validation (button mapping, macros, lighting, DPI, polling rate, and other controls confirmed working through Launcher)
 - [ ] Fedora RPM
 
 See [lgl-keychron-helper_projectplan.md](lgl-keychron-helper_projectplan.md) for the detailed implementation plan and acceptance criteria.

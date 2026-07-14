@@ -18,17 +18,10 @@ The first working prototype will target Fedora, run from source, and be validate
 - Network: an internet connection is required.
 - Browser engine: a bundled Chromium engine is acceptable; users must not need a separate Chromium browser.
 - Supported products: devices officially supported by Keychron Launcher.
-- Initial feature scope:
-  - Device detection and connection.
-  - Button remapping and assignment.
-  - Macro creation and assignment.
-  - Lighting configuration.
-  - DPI/sensitivity stage configuration.
-  - Polling rate (up to 8K), lift-off distance, and other non-firmware controls exposed by Launcher.
+- Initial feature scope: device detection and connection. Button remapping, macros, lighting, DPI/sensitivity, polling rate (up to 8K), lift-off distance, and other non-firmware controls are handled entirely by Launcher's own interface once connected — confirmed working (Phase 4) — and are not reimplemented by this app.
 - Deferred scope: firmware updates and flashing.
 - Site storage: persist Launcher cookies, local storage, and settings between launches.
 - Linux permissions: detect missing HID permissions and offer guided installation through `pkexec`.
-- Diagnostics: provide a user-accessible Advanced section without changing the normal Launcher experience.
 
 ## Recommended architecture
 
@@ -150,6 +143,8 @@ Exit criterion: a regular Fedora user can resolve a missing-device-permission fa
 
 ### Phase 4 — M7 8K feature validation
 
+**Amendment (2026-07-14):** confirmed working through Launcher's own interface — button mapping, macros, lighting, DPI/sensitivity, polling rate, and other controls all function correctly through the app's WebHID connection. Not every sub-item below was necessarily exercised exhaustively one by one, but general functionality is confirmed good.
+
 Estimated effort: 3–5 working days.
 
 Validate the following against the physical mouse:
@@ -172,6 +167,8 @@ Firmware functionality should be treated as unsupported during this milestone. I
 Exit criterion: detection, button remapping, macros, lighting, and all non-firmware M7 8K configuration controls work reliably.
 
 ### Phase 5 — Advanced diagnostics
+
+**Amendment (2026-07-14):** removed from scope. Decided not needed; the app's guided permission flow already surfaces the diagnostics that actually matter (missing `hidraw` access) at the point it's relevant, without a separate diagnostics screen. The rest of this section is kept for historical record only.
 
 Estimated effort: 2–3 working days.
 
@@ -293,7 +290,7 @@ The prototype is complete when a non-root Fedora user can:
 4. Select and connect a wired M7 8K through the intended Launcher flow.
 5. Use button remapping, macros, lighting, and all non-firmware controls.
 6. Restart the app without losing Launcher site settings.
-7. Diagnose common connection and permission failures from the Advanced section.
+7. ~~Diagnose common connection and permission failures from the Advanced section.~~ — **Dropped**, Advanced diagnostics is out of scope (see Phase 5 amendment); the guided permission popup already surfaces the one diagnostic that matters in the moment it's relevant.
 
 ## Principal risks and mitigations
 

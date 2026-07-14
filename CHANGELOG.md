@@ -15,6 +15,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - `react`, `react-dom`, `@types/react`, `@types/react-dom`, `vite`, `@vitejs/plugin-react`, and `vitest` removed from `package.json`. These were pre-staged during initial planning for a React-based device chooser and Advanced diagnostics UI that turned out not to be needed — Launcher already has its own device-switching UI, and the local screens that do exist (About, device-confirm, permission-setup) are small, static, and better served by plain HTML/JS with no build step than by a framework. Zero React code was ever written; this is dependency cleanup, not a behavior change. See the architecture amendment in `lgl-keychron-helper_projectplan.md`.
+- `README.md`'s "Planned Features" table removed — it had gone stale (listing already-completed items like guided device permissions as merely "planned") and fully duplicated the "Current Status" checklist, which tracks done-vs-not-done accurately. The `[!IMPORTANT]` "not yet a working configurator" callout was also stale — replaced with an accurate description of what currently works versus what's still in progress.
+- Advanced diagnostics dropped from scope entirely (`lgl-keychron-helper_projectplan.md` Phase 5, amended, kept for historical record). The guided permission popup already surfaces the one diagnostic that actually matters (missing `hidraw` access) at the moment it's relevant; a separate diagnostics screen isn't needed.
+- `README.md`'s "Development" section (build/run instructions) removed to keep the README focused on end users rather than contributors.
+- `lgl-keychron-helper_projectplan.md`'s "Agreed requirements" no longer lists button remapping/macros/lighting/DPI/polling rate/lift-off distance as separate scope items (redundant with the Phase 4 confirmation that Launcher already handles all of this), and no longer lists a "Diagnostics" requirement now that Advanced diagnostics is out of scope.
+
+### Fixed
+
+- `README.md`'s Security Model section overclaimed two properties that aren't actually implemented: "hardware access is restricted to approved origins" (only the device vendor ID is checked, not the requesting origin) and that downloads are "controlled" (no `will-download` handler exists anywhere). Corrected the wording to describe what's actually implemented, with both gaps called out explicitly rather than silently dropped from the list — they're still tracked as known gaps to close, not resolved.
+
+### Confirmed
+
+- M7 8K feature validation (Phase 4): button mapping, macros, lighting, DPI/sensitivity, and polling rate all confirmed working correctly through Launcher's own interface via this app's WebHID connection.
 
 ### Planned
 
@@ -56,4 +68,4 @@ Initial Phase 1 scaffold: the smallest possible Electron application capable of 
 
 - The device confirmation popup always targets the first Keychron-vendor-ID match. This is by design, not a gap to fill later: Launcher itself already has its own UI for switching between multiple connected Keychron devices (observed with the Ultra-Link 8K dongle's keyboard/mouse detection screen), so this app's job is just gating individual WebHID grants one at a time, not building a parallel device-management UI.
 - Guided permission install needs a PolicyKit authentication agent running in the session to show the `pkexec` prompt at all; on non-standard desktop sessions (e.g. a bare KWin session without a full Plasma session running) one may not be auto-started. The app doesn't manage or start one itself — that's session-level configuration outside its scope — but if `pkexec` fails for this or any other reason, the popup now shows the equivalent manual commands as a fallback instead of leaving the user stuck.
-- No Advanced diagnostics section yet — a later phase per `lgl-keychron-helper_projectplan.md`. It will be a plain local HTML/JS popup, not React (see the Removed section above).
+- No origin validation on HID permission handlers, and no download interception (`will-download`) — both tracked as known security gaps to close before public release.
