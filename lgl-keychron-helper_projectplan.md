@@ -18,43 +18,29 @@ The first working prototype will target Fedora, run from source, and be validate
 - Network: an internet connection is required.
 - Browser engine: a bundled Chromium engine is acceptable; users must not need a separate Chromium browser.
 - Supported products: devices officially supported by Keychron Launcher.
-- Initial feature scope: device detection and connection. Button remapping, macros, lighting, DPI/sensitivity, polling rate (up to 8K), lift-off distance, and other non-firmware controls are handled entirely by Launcher's own interface once connected — confirmed working (Phase 4) — and are not reimplemented by this app.
+- Initial feature scope: device detection and connection through Launcher (confirmed working, Phase 4). All device configuration — button remapping, macros, lighting, DPI/sensitivity, polling rate, lift-off distance — is achieved through the Keychron webapp itself, not this app.
 - Deferred scope: firmware updates and flashing.
 - Site storage: persist Launcher cookies, local storage, and settings between launches.
 - Linux permissions: detect missing HID permissions and offer guided installation through `pkexec`.
 
 ## Recommended architecture
 
-**Amendment (2026-07-14):** React and Vite were dropped from the architecture entirely, not just the device chooser. The original rationale for React below was mainly to support a full multi-device chooser UI — but Launcher already has its own UI for switching between multiple connected Keychron devices, so that chooser was never needed (see the Phase 2 amendment). Once that was gone, nothing in the app actually required a UI framework: the local trusted screens that do exist (About, device-connect confirmation, permission setup) are small, static, mostly one-shot popups, well served by plain HTML/CSS/vanilla JS loaded directly via `BrowserWindow.loadFile()`, with no build step, no bundler, and no framework dependency to keep patched and audited. `react`, `react-dom`, `vite`, `@vitejs/plugin-react`, and `vitest` were removed from `package.json` accordingly. References to React/Vite below describe the original plan and are superseded; treat "React screen" as "local HTML/JS popup" throughout.
-
-Use Electron with TypeScript and React.
+**Amendment (2026-07-15):** this section originally called for React and Vite; both were dropped from the architecture entirely. React's only real justification was a full multi-device chooser UI — but Launcher already has its own UI for switching between multiple connected Keychron devices, so that chooser was never needed. With that gone, nothing in the app requires a UI framework, a preload script, or a context bridge: the local trusted screens (About, device-connect confirmation, permission setup) are small, static, mostly one-shot popups loaded directly via `BrowserWindow.loadFile()`, and each communicates back to the main process through simple in-page hash-navigation links (e.g. `href="#connect"`, intercepted with a `did-navigate-in-page` listener) — no IPC, no `contextBridge`, no bundler, and one fewer dependency surface to keep patched and audited. The actual architecture is Electron + TypeScript only.
 
 Electron is the preferred starting point because its Chromium renderer matches the browser engine Keychron officially expects, and Electron exposes application-level WebHID selection and permission APIs. This allows the app to load Launcher directly and respond when the site calls `navigator.hid.requestDevice()` without recreating Keychron's UI or reverse-engineering its HID protocol.
 
-React will provide the application's native-facing screens and components. It will not replace, recreate, or inject itself into the Keychron Launcher interface. The live Launcher will remain isolated remote content loaded directly by Electron.
+Local trusted screens do not replace, recreate, or inject themselves into the Keychron Launcher interface. The live Launcher remains isolated remote content loaded directly by Electron in its own window and session.
 
-React should be used for:
+The application:
 
-- The native HID device chooser.
-- The Advanced diagnostics section.
-- USB permission guidance and installation status.
-- Offline, loading, and site-failure screens.
-- Application settings and confirmation dialogs.
-
-Keeping these responsibilities separate preserves Keychron's intended experience while giving the helper's own UI a maintainable component model.
-
-The application should:
-
-- Load `https://launcher.keychron.com/` directly in a `BrowserWindow`.
-- Use a persistent Electron session for Launcher data.
-- Handle Electron's `select-hid-device` event with a native device chooser.
-- Permit HID access only for approved Keychron Launcher origins and suitable Keychron devices.
-- Keep Node.js integration disabled for all remote content.
-- Enable context isolation and renderer sandboxing.
-- Expose no privileged preload API to the Keychron website unless a later requirement makes one unavoidable.
-- Expose only narrowly defined, validated IPC operations to trusted local React pages.
-- Restrict unexpected navigation and open ordinary external links safely.
-- Keep native diagnostics separate from the Launcher page.
+- Loads `https://launcher.keychron.com/` directly in a `BrowserWindow`.
+- Uses a persistent Electron session (`persist:launcher`) for Launcher data.
+- Handles Electron's `select-hid-device` event with a native confirmation popup.
+- Permits HID access filtered to Keychron's USB vendor ID — **origin validation is not yet implemented**, a known gap.
+- Keeps Node.js integration disabled for all content, remote and local alike.
+- Enables context isolation and renderer sandboxing everywhere.
+- Exposes no preload script or context bridge to any window, remote or local.
+- Restricts unexpected navigation and opens ordinary external links safely via `shell.openExternal`.
 
 ## Security boundaries
 
@@ -66,14 +52,15 @@ Required controls:
 - `contextIsolation: true`.
 - Renderer sandbox enabled.
 - HTTPS-only Launcher URL.
-- Explicit origin allowlist for HID requests.
+- Explicit origin allowlist for HID requests — **not yet implemented**; currently only the device vendor ID is checked, not the requesting origin. Top-priority known gap.
 - Device filtering by verified vendor and product information.
-- Separate security policies for trusted local React content and untrusted remote Launcher content.
-- A narrow context bridge for local React screens, with no generic command execution or unrestricted filesystem access.
+- Separate security policies for trusted local content and untrusted remote Launcher content.
+- No preload script or context bridge anywhere — local screens communicate via plain hash-navigation links, not IPC, so there is no bridge surface to narrow or audit in the first place.
 - Deny unrelated Electron permission requests by default.
 - Prevent the remote page from navigating the main window to an untrusted origin.
 - Do not enable Chromium's HID blocklist override unless testing proves that a required M7 8K interface is blocked and the exception can be narrowly justified.
 - Do not log HID report contents, macro contents, key assignments, or device serial numbers by default.
+- Intercept downloads (`session.on('will-download', ...)`) — **not yet implemented**, known gap.
 
 ## Project phases
 
@@ -137,7 +124,9 @@ Original plan: initially target only verified M7 8K identifiers. Expansion to ot
 
 #### Distrobox consideration
 
-Installing a `udev` rule inside the Fedora 44 Distrobox will not configure the host. Development mode must detect the container and arrange for the privileged helper to execute on the host, potentially through `distrobox-host-exec`. This behavior must be tested rather than assumed. An installed RPM will run directly on the host and will not need this development-specific path.
+**Amendment (2026-07-15):** resolved in practice by workflow rather than code. The Electron app itself is never launched inside the Distrobox — it's only *built* there (`npm run build:main`); the resulting binary is always executed directly from a host terminal (`node_modules/electron/dist/electron .`, or the packaged `lgl-keychron-helper` bundle). Since `pkexec` and the privileged helper only ever run in that host-launched process, they've always executed natively on the host with no container awareness needed. `distrobox-host-exec` was never required and no container-detection code was written.
+
+Original concern: installing a `udev` rule inside the Fedora 44 Distrobox will not configure the host. Development mode must detect the container and arrange for the privileged helper to execute on the host, potentially through `distrobox-host-exec`. This behavior must be tested rather than assumed. An installed RPM will run directly on the host and will not need this development-specific path.
 
 Exit criterion: a regular Fedora user can resolve a missing-device-permission failure through one guided `pkexec` prompt without manually editing system files or running the app as root.
 
@@ -197,13 +186,14 @@ Exit criterion: common USB permission, website loading, and device-selection pro
 
 ### Phase 6 — Testing and source prototype release
 
+**Amendment (2026-07-15):** `vitest` (the originally planned test runner) was removed from `package.json` along with React/Vite — see the architecture amendment above. No test runner is currently installed; one needs choosing when this phase starts. "Tests for Distrobox and host detection" below no longer applies as written — there is no Distrobox/host detection code, since the app is simply never launched inside the Distrobox at all (see the Phase 3 Distrobox-consideration amendment).
+
 Estimated effort: 2–4 working days.
 
 Add:
 
 - Unit tests for origin, navigation, and HID permission decisions.
 - Unit tests for `udev` rule generation and validation.
-- Tests for Distrobox and host detection.
 - Electron integration tests using a local mock WebHID page where practical.
 - A physical-device M7 8K test checklist.
 - Fedora source-build and run instructions.
@@ -316,13 +306,13 @@ Mitigation: use verified Keychron identifiers, `uaccess` session permissions, au
 
 The development container may see devices or system configuration differently from the host.
 
-Mitigation: test host execution explicitly, report container status in diagnostics, and include a host-native test before declaring a phase complete.
+Mitigation: **resolved by workflow** — the app is never launched inside the Distrobox, only built there; every run (dev or packaged) happens directly on the host, so this mismatch never actually arises in practice. ("Report container status in diagnostics" no longer applies — Advanced diagnostics is out of scope.) Host-native testing before declaring a phase complete remains good practice regardless.
 
 ### Device-selection differences in Electron
 
 Electron exposes WebHID selection through application events and may not show the same chooser as Chrome automatically.
 
-Mitigation: implement a small native chooser that preserves the same user decision and device information while leaving the rest of the Keychron flow unchanged.
+Mitigation: **done.** `src/main/device-confirm-window.ts` implements a small native confirmation popup that preserves the same user decision and device information while leaving the rest of the Keychron flow unchanged.
 
 ### Firmware controls remain visible
 

@@ -126,7 +126,7 @@ Keychron and Keychron Launcher are copyright and trademarks of ©Keychron Inc. L
 
 ## License
 
-MIT. A licence file will be added before the first software release.
+MIT. See [LICENSE](LICENSE), which also covers the Keychron trademark disclaimer.
 
 ---
 

@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - `README.md`'s Security Model section overclaimed two properties that aren't actually implemented: "hardware access is restricted to approved origins" (only the device vendor ID is checked, not the requesting origin) and that downloads are "controlled" (no `will-download` handler exists anywhere). Corrected the wording to describe what's actually implemented, with both gaps called out explicitly rather than silently dropped from the list — they're still tracked as known gaps to close, not resolved.
+- `lgl-keychron-helper_projectplan.md`'s "Recommended architecture" and "Security boundaries" sections rewritten — they still described a React/preload/context-bridge design that was never built. Now accurately state there's no preload script or context bridge anywhere (local screens use plain hash-navigation links, not IPC) and explicitly flag both open security gaps inline. Also amended: Phase 3's Distrobox consideration (resolved by workflow — the app is never launched inside the Distrobox, only built there), Phase 6 (`vitest` was removed, no test runner currently installed; Distrobox/host-detection tests don't apply to code that doesn't exist), and two risk-mitigation entries that referenced the now-dropped diagnostics feature or an already-completed device chooser.
 
 ### Confirmed
 
