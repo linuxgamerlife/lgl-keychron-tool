@@ -40,7 +40,6 @@ LGL Keychron Helper is a Linux desktop wrapper for the official [Keychron Launch
 - Runs the graphical application as an ordinary user
 - Automatically detects and guides the user through fixing missing Linux HID permissions
 - Targets a source-built prototype followed by distribution via Fedora COPR
-- Firmware updates are deliberately deferred until safe flashing, failure handling, and device recovery procedures have been designed and physically tested
 
 > [!NOTE]
 > This is a working prototype: it connects to a physical Keychron device and lets Launcher read and configure it. Automated tests, an application icon, and Fedora RPM/COPR packaging are still in progress.

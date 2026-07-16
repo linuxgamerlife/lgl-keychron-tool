@@ -18,8 +18,7 @@ The first working prototype will target Fedora, run from source, and be validate
 - Network: an internet connection is required.
 - Browser engine: a bundled Chromium engine is acceptable; users must not need a separate Chromium browser.
 - Supported products: devices officially supported by Keychron Launcher.
-- Initial feature scope: device detection and connection through Launcher (confirmed working, Phase 4). All device configuration — button remapping, macros, lighting, DPI/sensitivity, polling rate, lift-off distance — is achieved through the Keychron webapp itself, not this app.
-- Deferred scope: firmware updates and flashing.
+- Initial feature scope: device detection and connection through Launcher (confirmed working, Phase 4). All device configuration and firmware updates — button remapping, macros, lighting, DPI/sensitivity, polling rate, lift-off distance — are achieved through the Keychron webapp itself, not this app.
 - Site storage: persist Launcher cookies, local storage, and settings between launches.
 - Linux permissions: detect missing HID permissions and offer guided installation through `pkexec`.
 
