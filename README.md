@@ -2,7 +2,7 @@
 
 # LGL Keychron Helper
 
-**Configure supported Keychron devices on Linux — without installing or opening a separate Chromium browser.**
+**Configure supported Keychron devices on Linux, without installing or opening a separate Chromium browser.**
 
 [![Version](https://img.shields.io/badge/version-0.1.0-informational)](CHANGELOG.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](#license)
@@ -23,7 +23,7 @@
 |---|---|
 | **Application** | LGL Keychron Helper |
 | **Version** | v0.1.0 |
-| **Status** | Functional prototype — Launcher loads, connects to a physical M7 8K, and guides the user through installing the required `udev` permission via an in-app `pkexec` prompt when needed |
+| **Status** | Functional prototype: Launcher loads, connects to a physical M7 8K, and guides the user through installing the required `udev` permission via an in-app `pkexec` prompt when needed |
 | **License** | MIT |
 | **Author** | [LinuxGamerLife](https://www.youtube.com/@linuxgamerlife) |
 
@@ -35,7 +35,7 @@ See [CHANGELOG.md](CHANGELOG.md) for a detailed history of changes.
 
 LGL Keychron Helper is a Linux desktop wrapper for the official [Keychron Launcher](https://launcher.keychron.com/). It bundles the browser engine Launcher requires, provides WebHID device access, and guides users through Linux USB permissions while preserving Keychron's intended interface and connection flow.
 
-- Uses the live Keychron Launcher rather than recreating the configurator — button mapping, macros, lighting, DPI/sensitivity, polling rate, and other device-specific controls are all handled by Launcher's own interface, not reimplemented here
+- Uses the live Keychron Launcher rather than recreating the configurator: button mapping, macros, lighting, DPI/sensitivity, polling rate, and other device-specific controls are all handled by Launcher's own interface, not reimplemented here
 - Supports devices officially recognised by Keychron Launcher
 - Runs the graphical application as an ordinary user
 - Automatically detects and guides the user through fixing missing Linux HID permissions
@@ -91,9 +91,9 @@ Remote Launcher content is treated as untrusted web content even though it is su
 
 - Node.js integration is disabled for remote content
 - Context isolation and renderer sandboxing are enabled
-- Hardware access is restricted to verified Keychron devices by USB vendor ID (origin validation is not yet implemented — tracked as a known gap)
+- Hardware access is restricted to verified Keychron devices by USB vendor ID (origin validation is not yet implemented, tracked as a known gap)
 - Unrelated browser permissions are denied by default
-- Navigation, popups, and external URLs are controlled (download interception is not yet implemented — tracked as a known gap)
+- Navigation, popups, and external URLs are controlled (download interception is not yet implemented, tracked as a known gap)
 - Trusted local content is separated from the remote website
 - Native operations use narrow, typed, validated interfaces
 - The remote website receives no arbitrary shell or filesystem access
