@@ -1,4 +1,5 @@
 import { BrowserWindow, type Session } from 'electron';
+import { ALLOWED_LAUNCHER_ORIGIN } from './allowed-origin.js';
 import { confirmDeviceConnection } from './device-confirm-window.js';
 import {
   findMatchingHidrawNodes,
@@ -17,6 +18,11 @@ export function registerHidPermissions(launcherSession: Session): void {
   launcherSession.on('select-hid-device', (event, details, callback) => {
     event.preventDefault();
 
+    if (details.frame?.origin !== ALLOWED_LAUNCHER_ORIGIN) {
+      callback(undefined);
+      return;
+    }
+
     const device = details.deviceList.find((candidate) => candidate.vendorId === KEYCHRON_VENDOR_ID);
 
     if (!device) {
@@ -28,11 +34,15 @@ export function registerHidPermissions(launcherSession: Session): void {
   });
 
   launcherSession.setDevicePermissionHandler((details) => {
-    return details.deviceType === 'hid' && details.device.vendorId === KEYCHRON_VENDOR_ID;
+    return (
+      details.origin === ALLOWED_LAUNCHER_ORIGIN &&
+      details.deviceType === 'hid' &&
+      details.device.vendorId === KEYCHRON_VENDOR_ID
+    );
   });
 
-  launcherSession.setPermissionCheckHandler((_webContents, permission) => {
-    return permission === 'hid';
+  launcherSession.setPermissionCheckHandler((_webContents, permission, requestingOrigin) => {
+    return permission === 'hid' && requestingOrigin === ALLOWED_LAUNCHER_ORIGIN;
   });
 
   // HID access is granted separately through select-hid-device / setDevicePermissionHandler

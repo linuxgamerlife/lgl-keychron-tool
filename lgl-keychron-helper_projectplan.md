@@ -35,7 +35,7 @@ The application:
 - Loads `https://launcher.keychron.com/` directly in a `BrowserWindow`.
 - Uses a persistent Electron session (`persist:launcher`) for Launcher data.
 - Handles Electron's `select-hid-device` event with a native confirmation popup.
-- Permits HID access filtered to Keychron's USB vendor ID: **origin validation is not yet implemented**, a known gap.
+- Permits HID access filtered to Keychron's USB vendor ID and requesting origin.
 - Keeps Node.js integration disabled for all content, remote and local alike.
 - Enables context isolation and renderer sandboxing everywhere.
 - Exposes no preload script or context bridge to any window, remote or local.
@@ -51,7 +51,7 @@ Required controls:
 - `contextIsolation: true`.
 - Renderer sandbox enabled.
 - HTTPS-only Launcher URL.
-- Explicit origin allowlist for HID requests: **not yet implemented**; currently only the device vendor ID is checked, not the requesting origin. Top-priority known gap.
+- Explicit origin allowlist for HID requests: **done.** `src/main/hid-permissions.ts` checks `details.frame?.origin` / `details.origin` / `requestingOrigin` against `ALLOWED_LAUNCHER_ORIGIN` (`src/main/allowed-origin.ts`, shared with `navigation-policy.ts`) in `select-hid-device`, `setDevicePermissionHandler`, and `setPermissionCheckHandler` respectively, alongside the existing vendor-ID check.
 - Device filtering by verified vendor and product information.
 - Separate security policies for trusted local content and untrusted remote Launcher content.
 - No preload script or context bridge anywhere: local screens communicate via plain hash-navigation links, not IPC, so there is no bridge surface to narrow or audit in the first place.
@@ -88,7 +88,7 @@ Turn the proof of concept into a maintainable application:
 - Create the main Launcher window and persistent profile. **Done in Phase 1.**
 - ~~Implement the HID device chooser as a React-based local application surface.~~ **Simplified per the amendment above:** a plain confirmation popup already exists and covers this; no multi-device chooser is needed.
 - Implement permission and navigation policies. **Done in Phase 1.**
-- Restrict HID permissions to approved origins and devices. **Partially done:** device filtering exists; origin validation is still an open gap.
+- Restrict HID permissions to approved origins and devices. **Done.**
 - Handle external URLs safely. **Done in Phase 1.**
 - Add offline, loading, and site-failure states (plain HTML/JS, not React).
 - Add structured, privacy-conscious application logging.
@@ -204,6 +204,11 @@ The RPM should provide:
 Installation should place system permission files directly, avoiding a first-run `pkexec` prompt when the package installation has already completed the necessary setup.
 
 Exit criterion: the application installs, launches, configures the M7 8K, upgrades, and uninstalls cleanly on supported Fedora versions.
+
+**Pending items for this phase (not yet done):**
+
+- [ ] Add a close button to the About popup.
+- [ ] Bump `package.json` version to `1.0.0` for the RPM release.
 
 ## Proposed repository structure
 

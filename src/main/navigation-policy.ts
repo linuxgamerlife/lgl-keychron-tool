@@ -1,10 +1,9 @@
 import { shell, type BrowserWindow } from 'electron';
-
-const ALLOWED_ORIGIN = 'https://launcher.keychron.com';
+import { ALLOWED_LAUNCHER_ORIGIN } from './allowed-origin.js';
 
 function isAllowedOrigin(url: string): boolean {
   try {
-    return new URL(url).origin === ALLOWED_ORIGIN;
+    return new URL(url).origin === ALLOWED_LAUNCHER_ORIGIN;
   } catch {
     return false;
   }
