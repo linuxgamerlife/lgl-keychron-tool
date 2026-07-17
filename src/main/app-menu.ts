@@ -1,11 +1,23 @@
 import { BrowserWindow, Menu, type MenuItemConstructorOptions } from 'electron';
 import { showAboutWindow } from './about-window.js';
+import { removeKeychronUdevRule, showRemoveUdevRuleScript } from './remove-udev-rule.js';
 
 export function registerApplicationMenu(): void {
   const template: MenuItemConstructorOptions[] = [
     {
       label: 'File',
-      submenu: [{ role: 'quit' }],
+      submenu: [
+        {
+          label: 'Remove Device Permissions…',
+          click: () => void removeKeychronUdevRule(BrowserWindow.getFocusedWindow()),
+        },
+        {
+          label: 'View Removal Script',
+          click: () => showRemoveUdevRuleScript(BrowserWindow.getFocusedWindow()),
+        },
+        { type: 'separator' },
+        { role: 'quit' },
+      ],
     },
     {
       label: 'Edit',

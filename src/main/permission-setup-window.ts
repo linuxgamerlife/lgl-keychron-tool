@@ -2,26 +2,13 @@ import { app, BrowserWindow } from 'electron';
 import { execFile } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
+import { resolveUdevDir } from './udev-paths.js';
 
 // Guides the user through installing resources/udev/71-keychron-hid.rules via a
 // narrow, fixed-operation privileged helper invoked through pkexec. The helper
 // script takes no arguments and performs no arbitrary operations — see
 // resources/udev/install-keychron-udev-rule.sh.
 //
-// pkexec spawns install-keychron-udev-rule.sh as a real OS process, which can't
-// read a path "inside" app.asar the way Electron's own patched fs/net APIs can —
-// app.asar is a single opaque file to everything else. scripts/package.mjs
-// unpacks resources/udev/ to app.asar.unpacked/resources/udev/ for exactly this
-// reason; this resolves to that unpacked copy when running packaged, or to the
-// plain resources/udev/ directory when running from source (no asar involved).
-function resolveUdevDir(): string {
-  const appPath = app.getAppPath();
-  const root = appPath.endsWith('.asar')
-    ? path.join(path.dirname(appPath), 'app.asar.unpacked')
-    : appPath;
-  return path.join(root, 'resources', 'udev');
-}
-
 // Resolves true if the install succeeded, false if the user cancelled or it failed.
 export function showPermissionSetupWindow(parent: BrowserWindow | null): Promise<boolean> {
   return new Promise((resolve) => {
