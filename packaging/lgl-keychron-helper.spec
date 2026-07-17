@@ -3,6 +3,14 @@ Version:        1.0.0
 Release:        1%{?dist}
 Summary:        Linux desktop helper for configuring supported Keychron devices via Keychron Launcher
 
+# The bundled Electron runtime and its shared libraries are prebuilt binaries, not
+# compiled by Fedora's own toolchain, so RPM's automatic debuginfo/GDB-index
+# generation (find-debuginfo.sh) fails against them (objcopy can't add a
+# .gdb_index section). Disabling debuginfo package generation is the standard
+# fix for RPMs that bundle prebuilt binaries like this (also done by VS Code,
+# and unofficial Slack/Discord RPMs, for the same reason).
+%global debug_package %{nil}
+
 License:        MIT
 URL:            https://github.com/linuxgamerlife/lgl-keychron-tool
 Source0:        %{name}-%{version}.tar.gz
