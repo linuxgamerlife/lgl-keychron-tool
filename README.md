@@ -58,6 +58,9 @@ LGL Keychron Helper is a Linux desktop wrapper for the official [Keychron Launch
 | **Connection** | Wired USB or wireless (Keychron dongle) |
 | **Web Configurator** | Keychron Launcher |
 
+> [!NOTE]
+> Development and testing focus on Fedora, since that's what the author runs, but nothing in the app or its `udev`/`pkexec` setup is Fedora-specific. It should work on any systemd + `udev` + PolicyKit-based Linux distro.
+
 > [!CAUTION]
 > Wireless (dongle) connection works for ordinary configuration, but Launcher itself displays this notice when a device is connected via the dongle: *"Please use a wired connection to upgrade your keyboard/mouse. This page is currently showing the receiver."* Use a wired connection for firmware updates.
 
