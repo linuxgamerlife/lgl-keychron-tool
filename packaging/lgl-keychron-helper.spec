@@ -12,15 +12,15 @@ Summary:        Linux desktop helper for configuring supported Keychron devices 
 %global debug_package %{nil}
 
 License:        MIT
-URL:            https://github.com/linuxgamerlife/lgl-keychron-tool
-# GitHub's archive endpoint names the top-level directory after the repo
-# (lgl-keychron-tool), not the package (lgl-keychron-helper), and strips a
-# leading "v" from numeric tags — so tag v%{version} unpacks to
-# lgl-keychron-tool-%{version}. The trailing /%{name}-%{version}.tar.gz segment
-# is just a friendly download filename; GitHub ignores it and serves the same
-# archive regardless. Requires a `v%{version}` tag to exist on GitHub before a
-# COPR (or any) build can fetch it.
-Source0:        https://github.com/linuxgamerlife/lgl-keychron-tool/archive/refs/tags/v%{version}/%{name}-%{version}.tar.gz
+URL:            https://github.com/linuxgamerlife/lgl-keychron-helper
+# GitHub names the archive's top-level directory after the repo and strips a
+# leading "v" from numeric tags, so tag v%{version} unpacks to
+# %{name}-%{version} — matching %setup's default assumption below, no -n
+# override needed. The trailing /%{name}-%{version}.tar.gz segment is just a
+# friendly download filename; GitHub ignores it and serves the same archive
+# regardless. Requires a `v%{version}` tag to exist on GitHub before a COPR
+# (or any) build can fetch it.
+Source0:        https://github.com/linuxgamerlife/lgl-keychron-helper/archive/refs/tags/v%{version}/%{name}-%{version}.tar.gz
 
 # BuildArch is only valid as "noarch"; a real arch name there breaks
 # rpmbuild's SRPM generation ("No compatible architectures found for build").
@@ -52,7 +52,7 @@ provides WebHID device access, and guides users through Linux USB permissions
 via a narrow, audited udev rule installed through PolicyKit.
 
 %prep
-%setup -q -n lgl-keychron-tool-%{version}
+%setup -q
 
 %build
 npm ci
