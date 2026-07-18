@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-07-18
+
+### Added
+
+- New app icon (`resources/lgl-keychron-helper.png`), with `resources/icon.png` and the full `packaging/icons/hicolor/` set regenerated from it.
+
+### Fixed
+
+- About popup (`src/main/about-window.ts`): fixed height increased (440px → 490px) to remove a scrollbar caused by content overflow, and the window is now resizable (`resizable: true`, with `minWidth`/`minHeight`) so it supports window-manager resize gestures the same way the Remove Permissions popup already does. Closes #2.
+- Remove Device Permissions popup (`resources/remove-permissions/remove-permissions.html`): added a note clarifying that on Fedora, permissions are installed and removed automatically by the RPM itself (via `%post`/`%postun`), so this popup is only needed on other systemd-based distros. Closes #1.
+
 ## [1.0.0] - 2026-07-17
 
 ### Added

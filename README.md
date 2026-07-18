@@ -4,7 +4,7 @@
 
 **Configure supported Keychron devices on Linux, without installing or opening a separate Chromium browser.**
 
-[![Version](https://img.shields.io/badge/version-1.0.0-informational)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.0.1-informational)](CHANGELOG.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](#license)
 [![Fedora](https://img.shields.io/badge/Fedora-44-blue?logo=fedora&logoColor=white)](https://fedoraproject.org)
 [![Electron](https://img.shields.io/badge/Electron-43-47848f?logo=electron&logoColor=white)](https://www.electronjs.org)
@@ -22,7 +22,7 @@
 |  |  |
 |----|----|
 | **Application** | LGL Keychron Helper |
-| **Version**    | v1.0.0 |
+| **Version**    | v1.0.1 |
 | **Status**    | Functional: Launcher loads, connects to a physical M7 8K, and guides the user through installing (and, if needed, removing) the required `udev` permission via an in-app `pkexec` prompt. Packaged as a Fedora RPM, built and locally verified; not yet published to COPR |
 | **License**    | MIT |
 | **Author**    | [LinuxGamerLife](https://www.youtube.com/@linuxgamerlife) |

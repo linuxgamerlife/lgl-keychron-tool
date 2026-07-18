@@ -1,5 +1,5 @@
 Name:           lgl-keychron-helper
-Version:        1.0.0
+Version:        1.0.1
 Release:        1%{?dist}
 Summary:        Linux desktop helper for configuring supported Keychron devices via Keychron Launcher
 
@@ -147,5 +147,10 @@ udevadm control --reload-rules >/dev/null 2>&1 || :
 udevadm trigger --subsystem-match=hidraw >/dev/null 2>&1 || :
 
 %changelog
+* Sat Jul 18 2026 LinuxGamerLife <noreply@linuxgamerlife.com> - 1.0.1-1
+- New app icon.
+- Fix About popup height/resize behavior.
+- Clarify Remove Device Permissions popup for Fedora RPM users.
+
 * Fri Jul 17 2026 LinuxGamerLife <noreply@linuxgamerlife.com> - 1.0.0-1
 - Initial RPM release.
